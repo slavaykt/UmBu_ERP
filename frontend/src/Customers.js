@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Button } from "reactstrap";
 import Modal from "./components/Modal"; // Importing from components folder
 
@@ -10,9 +11,24 @@ const initialCustomers = [
 ];
 
 const Customers = () => {
-  const [customers, setCustomers] = useState(initialCustomers);
+  const [customers, setCustomers] = useState([]);
   const [modal, setModal] = useState(false);
   const [activeCustomer, setActiveCustomer] = useState(null);
+
+  // Fetch Customers with async/await
+  const refreshList = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/customers/");
+      setCustomers(response.data);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    refreshList();
+  }, []);
 
   // Toggle modal visibility
   const toggleModal = () => setModal(!modal);
