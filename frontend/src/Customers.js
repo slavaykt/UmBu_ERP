@@ -33,16 +33,22 @@ const Customers = () => {
   // Toggle modal visibility
   const toggleModal = () => setModal(!modal);
 
-  // Handle Add & Edit Customer
-  const handleSave = (customer) => {
-    if (customer.id) {
-      // Update existing customer
-      setCustomers(customers.map((item) => (item.id === customer.id ? customer : item)));
-    } else {
-      // Add new customer with an auto-incremented ID
-      setCustomers([...customers, { ...customer, id: customers.length + 1 }]);
+  // Save (Add or Update) a Customer
+  const handleSave = async (customer) => {
+    try {
+      if (customer.id) {
+        // Update existing customer
+        await axios.put(`http://localhost:8000/api/customers/${customer.id}/`, customer);
+        setCustomers(customers.map((item) => (item.id === customer.id ? customer : item)));
+      } else {
+        // Create new customer
+        const response = await axios.post("http://localhost:8000/api/customers/", customer);
+        setCustomers([...customers, response.data]);
+      }
+      toggleModal();
+    } catch (error) {
+      console.error("Error saving customer:", error);
     }
-    toggleModal();
   };
 
   // Open modal for editing a customer
@@ -51,9 +57,14 @@ const Customers = () => {
     toggleModal();
   };
 
-  // Delete a customer
-  const handleDelete = (id) => {
-    setCustomers(customers.filter((customer) => customer.id !== id));
+  // Delete a Customer
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/customers/${id}/`);
+      setCustomers(customers.filter((customer) => customer.id !== id));
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+    }
   };
 
   return (
