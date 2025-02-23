@@ -3,12 +3,12 @@ import axios from "axios";
 import { Button } from "reactstrap";
 import Modal from "./components/Modal"; // Importing from components folder
 
-const initialCustomers = [
-  { id: 1, title: "John Doe", tax_id: "123-456-789", address: "123 Main St, Springfield" },
-  { id: 2, title: "Jane Smith", tax_id: "987-654-321", address: "456 Elm St, Shelbyville" },
-  { id: 3, title: "Sam Johnson", tax_id: "555-666-777", address: "789 Oak St, Capital City" },
-  { id: 4, title: "Alice Brown", tax_id: "222-333-444", address: "159 Maple St, North Haverbrook" },
-];
+// const initialCustomers = [
+//   { id: 1, title: "John Doe", tax_id: "123-456-789", address: "123 Main St, Springfield" },
+//   { id: 2, title: "Jane Smith", tax_id: "987-654-321", address: "456 Elm St, Shelbyville" },
+//   { id: 3, title: "Sam Johnson", tax_id: "555-666-777", address: "789 Oak St, Capital City" },
+//   { id: 4, title: "Alice Brown", tax_id: "222-333-444", address: "159 Maple St, North Haverbrook" },
+// ];
 
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
