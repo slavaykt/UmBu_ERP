@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button } from "reactstrap";
-import Modal from "./components/Modal"; // Importing from components folder
+import Modal from "./CustomerModal"; // Importing from components folder
 
 // const initialCustomers = [
 //   { id: 1, title: "John Doe", tax_id: "123-456-789", address: "123 Main St, Springfield" },

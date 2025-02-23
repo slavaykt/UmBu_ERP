@@ -1,9 +1,10 @@
 import React from "react";
-import Customers from "./Customers";
+// import Customers from "./components/Customers";
+import Invoices from "./components/Invoices";
 
 const App = () => {
 
-  return <Customers/>
+  return <Invoices/>
 };
 
 export default App;

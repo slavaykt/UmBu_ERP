@@ -5,6 +5,7 @@ from invoices import views
 
 router = routers.DefaultRouter()
 router.register(r'customers', views.CustomerView, 'customer')
+router.register(r"invoices", views.InvoiceViewSet, basename="invoice")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
