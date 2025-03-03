@@ -20,6 +20,7 @@ const Invoices = () => {
 
   // Save (Add/Edit) an invoice and update state immediately
   const handleSave = async (invoice) => {
+    console.log(invoice)
     try {
       if (invoice.id) {
         // Update existing invoice
