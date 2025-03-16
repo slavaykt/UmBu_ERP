@@ -7,6 +7,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { CustomInput, CustomCheckbox, CustomTableInput, CustomTableForeignKeySelect, CustomTableSelect } from './FormElements'
 // import Grid from '@mui/material/Grid';
 import { Grid2 } from '@mui/material';
+import Box from '@mui/material/Box';
 
 const Grid = Grid2;
 
@@ -213,7 +214,7 @@ const EditForm = ({ itemId, refreshTodoList, layout, apiLink, setShowEdit }) => 
         }
 
         return (
-            <Grid key={nodeIndex} item xs={node.size}>
+            <Grid key={nodeIndex} size={node.size}>
                 {element}
             </Grid>
         );
@@ -249,10 +250,12 @@ const EditForm = ({ itemId, refreshTodoList, layout, apiLink, setShowEdit }) => 
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Grid container spacing={1}>
-                    {layout.map((node, nodeIndex) => renderNode(node, nodeIndex))}
-                </Grid>
-                <div className="d-flex justify-content-center">
+                <Box sx={{ flexGrow: 1 }}>
+                    <Grid container spacing={1}>
+                        {layout.map((node, nodeIndex) => renderNode(node, nodeIndex))}
+                    </Grid>
+                </Box>
+                <div className="d-flex justify-content-center mt-3">
                     <button className="mt-2 w-50 center-block btn btn-success"> Submit </button>
                 </div>
             </form>

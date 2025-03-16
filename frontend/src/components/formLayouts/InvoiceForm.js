@@ -5,9 +5,9 @@ const InvoiceForm = {
     
       {
         type: 'input',
-        label: 'customer_name',
+        label: 'customer name',
         key: 'customer_name',
-        size: 6,
+        size: 12,
         inputType: 'text',
         readOnly: true,
         validation: {
@@ -20,10 +20,20 @@ const InvoiceForm = {
       },
       {
         type: 'input',
-        label: 'invoice_date',
+        label: 'invoice date',
         key: 'invoice_date',
         size: 6,
         inputType: 'date',
+        validation: {
+          minLength: 5
+        }
+      },
+      {
+        type: 'input',
+        label: 'total amount',
+        key: 'total_amount',
+        size: 6,
+        inputType: 'number',
         validation: {
           minLength: 5
         }
