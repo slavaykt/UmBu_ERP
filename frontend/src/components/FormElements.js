@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const CustomInput = ({ node, register, errors, validation }) => {
-    const {label, key, inputType} = node
+    const {label, key, type} = node
     const input_id = `invoice-${key}`
     if (validation.required) {
         validation.required = `поле ${label} должно быть заполнено!`
@@ -27,7 +27,7 @@ const CustomInput = ({ node, register, errors, validation }) => {
                         ? <Tooltip id={`tooltip-${input_id}`}>{errors?.[key]?.message}</Tooltip> 
                         : <></>}
                 >
-                    <input type={inputType} id={input_id}
+                    <input type={type} id={input_id}
                         className={`form-control ${errors?.[key] ? 'is-invalid' : ''
                             }`}
                         {...register(key, validation)} />
@@ -35,6 +35,36 @@ const CustomInput = ({ node, register, errors, validation }) => {
             </div>
         </>
     )
+}
+
+const CustomSelect = ({ node, register, errors, options, optionTitle, handleChange, validation }) => {
+    const {label, key} = node
+    const element_id = `invoice-${key}`
+    return (
+        <>
+            <div className="form-group">
+                <label className="control-label" htmlFor={element_id}>{label}</label>
+                <OverlayTrigger
+                    key={element_id}
+                    placement="bottom"
+                    overlay={errors?.[key]
+                        ? <Tooltip id={`tooltip-${element_id}`}>{errors?.[key]?.message}</Tooltip>
+                        : <></>}
+                >
+                    <select
+                        id={element_id}
+                        className={`form-control ${errors?.[key] ? 'is-invalid' : ''}`}
+                        {...register(key, validation)}
+                        onChange={(e) => handleChange(e,node)}
+                    >
+                        <option value="">Select customer</option>
+                        {options.map((item, i) => (
+                            <option key={item.id} value={item.id}>{item[optionTitle]}</option>
+                        ))}
+                    </select>
+                </OverlayTrigger>
+            </div>
+        </>)
 }
 
 const CustomCheckbox = ({ label, register }) => (
@@ -104,4 +134,5 @@ const CustomTableSelect = ({ register, errors, tableName, rowIndex, columnName, 
         </>)
 }
 
-export {CustomInput, CustomCheckbox, CustomTableInput, CustomTableForeignKeySelect, CustomTableSelect}
+
+export {CustomInput, CustomCheckbox, CustomTableInput, CustomTableForeignKeySelect, CustomTableSelect, CustomSelect}

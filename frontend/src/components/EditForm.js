@@ -4,8 +4,7 @@ import { DevTool } from '@hookform/devtools'
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { CustomInput, CustomCheckbox, CustomTableInput, CustomTableForeignKeySelect, CustomTableSelect } from './FormElements'
-// import Grid from '@mui/material/Grid';
+import { CustomInput, CustomCheckbox, CustomTableInput, CustomTableForeignKeySelect, CustomTableSelect, CustomSelect } from './FormElements'
 import { Grid2 } from '@mui/material';
 import Box from '@mui/material/Box';
 
@@ -152,99 +151,144 @@ const EditForm = ({ itemId, refreshTodoList, layout, apiLink, setShowEdit }) => 
             }
         )
 
+    const [options, setOptions] = useState({})
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
+        layout.forEach((node) => {
+            if (node.api) {
+                fetchOptions(node)
+            }
+        })
         refresh()
     }, [itemId])
 
     const refresh = async () => {
+        setLoading(true);
         if (itemId) {
             const response = await fetch(`http://localhost:8000/api/${apiLink}/${itemId}/`)
             const data = await response.json()
             layout.map((node) => {
-                if (node.inputType==='date') {
+                if (node.type === 'date') {
                     data[node.key] = new Date(data[node.key]).toISOString().slice(0, 10)
                 }
             })
             reset(data)
         } else {
-            const response = await fetch(`/api/${apiLink}/empty_template/`)
-            const data = await response.json()
-            console.log(data)
+            const data = layout.reduce((acc, node) => {
+                switch (node.type) {
+                    case "text":
+                        acc[node.key] = ""
+                        break
+                    case "number":
+                        acc[node.key] = 0
+                        break
+                    case "date":
+                        acc[node.key] = null
+                        break
+                    case "checkbox":
+                        acc[node.key] = false
+                        break
+                    case "foreignKeySelect":
+                        acc[node.key] = ""
+                        break
+                    default:
+                        acc[node.key] = null
+                }
+                return acc;
+            }, {});
             reset(data)
         }
+        setLoading(false);
     }
 
+    const fetchOptions = async (node) => {
+        setLoading(true);
+        const response = await fetch(`http://localhost:8000//api/${node.api.link}/`);
+        const data = await response.json();
+        setOptions(prevOptions => ({
+            ...prevOptions,
+            [node.api.key]: data
+        }));
+        setLoading(false);
+    }
+
+    const handleForeignKeyOptionChange = (event, node) => {
+        setValue(node.key, event.target.value);
+      };
+    
+
     const renderNode = (node, nodeIndex) => {
+        const {type, validation, size} = node
         let element;
 
-        switch (node.type) {
-            case 'input':
-                element = (
-                    <CustomInput
-                        node = {node}
-                        register={register}
-                        required
-                        errors={errors}
-                        validation={node.validation} />
-                );
-                break;
-            case 'checkbox':
-                element = (
-                    <CustomCheckbox
-                        label={node.label}
-                        register={register}
-                        validation={node.validation} />
-                );
-                break;
-            case 'tableComponent':
-                element = (
-                    <TableComponent
-                        control={control}
-                        register={register}
-                        errors={errors}
-                        name={node.collection}
-                        columns={node.columns}
-                        setValue={setValue}
-                        itemId={itemId}
-                    />
-                );
-                break;
-            default:
-                element = null;
+        if (["text", "number", "date"].includes(type)) {
+            element = (
+                <CustomInput
+                    node={node}
+                    register={register}
+                    required
+                    errors={errors}
+                    validation={validation}
+                />
+            );
+        } else if (type === "checkbox") {
+            element = (
+                <CustomCheckbox
+                    label={node.label}
+                    register={register}
+                    validation={validation}
+                />
+            );
+        } else if (type === "foreignKeySelect") {
+            element = (
+                <CustomSelect
+                    node={node}
+                    register={register}
+                    errors={errors}
+                    options={options?.[node.api.key] ?? []}
+                    optionTitle="title"
+                    handleChange={handleForeignKeyOptionChange}
+                    validation={validation}
+                />
+            );
+        } else if (node.type === "tableComponent") {
+            element = (
+                <TableComponent
+                    control={control}
+                    register={register}
+                    errors={errors}
+                    name={node.collection}
+                    columns={node.columns}
+                    setValue={setValue}
+                    itemId={itemId}
+                />
+            );
+        } else {
+            element = null;
         }
 
         return (
-            <Grid key={nodeIndex} size={node.size}>
+            <Grid key={nodeIndex} size={size}>
                 {element}
             </Grid>
         );
     }
 
-    const onSubmit = (data) => {
-        // Handle form submission
-        if (data.id) {
-            axios
-                .put(`/api/todos/${data.id}/`, data)
-                .then((res) => {
-                    refreshTodoList()
-                    setShowEdit(false); // Закрыть форму после успешного обновления
-                })
-                .catch((error) => {
-                    // Handle PUT request error
-                    console.error("Error updating item:", error)
-                });
-            return;
+    const onSubmit = async (data) => {
+        console.log(data)
+        try {
+            if (data.id) {
+                await axios.put(`http://localhost:8000/api/${apiLink}/${itemId}/`, data);
+                // refreshTodoList();
+                setShowEdit(false); // Закрыть форму после успешного обновления
+            } else {
+                await axios.post(`http://localhost:8000/api/${apiLink}/`, data);
+                // refreshTodoList();
+            }
+        } catch (error) {
+            console.error("Error submitting item:", error);
         }
-
-        axios
-            .post("/api/todos/", data)
-            .then((res) => {
-                refreshTodoList()
-            })
-            .catch((error) => {
-                // Handle POST request error
-                console.error("Error creating item:", error)
-            });
     };
 
     return (

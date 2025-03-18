@@ -1,6 +1,6 @@
 import React from "react";
 // import Customers from "./components/Customers";
-import Invoices from "./components/invoicesNew";
+import Invoices from "./components/Invoices";
 
 const App = () => {
 

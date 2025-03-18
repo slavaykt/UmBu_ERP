@@ -2,38 +2,34 @@ const InvoiceForm = {
     apiLink: 'invoices',
   layout:
   [
-    
       {
-        type: 'input',
-        label: 'customer name',
-        key: 'customer_name',
+        type: 'foreignKeySelect',
+        label: 'customer',
+        key: 'customer',
         size: 12,
-        inputType: 'text',
         readOnly: true,
+        api: {
+          link: 'customers',
+          key: 'customers'
+        },
         validation: {
-          required: true,
-          minLength: 5,
-          validate: (v) => {
-                return v !== 'fuck' || 'ругательные слова недопустимы!'
-            }
+          required: true
         }
       },
       {
-        type: 'input',
+        type: 'date',
         label: 'invoice date',
         key: 'invoice_date',
         size: 6,
-        inputType: 'date',
         validation: {
           minLength: 5
-        }
+        }   
       },
       {
-        type: 'input',
+        type: 'number',
         label: 'total amount',
         key: 'total_amount',
         size: 6,
-        inputType: 'number',
         validation: {
           minLength: 5
         }
